@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+            min-height: 100vh;
+            background-image: url('2 Incharge.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .usage-btn {
+      position: absolute;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .usage-btn:hover {
+      background-color: #3e8e41;
+    }
+    
+    .usage-btn {
+      top: 20px; /* Position */
+    }
+
+    </style>
+</head>
+<body>
+    <h2>Usage Records</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient ID</th>
+                <th>Last Requested</th>
+                <th>Item Name</th>
+                <th>Subcategory</th>
+                <th>Demanded Qty</th>
+                <th>Remaining Qty</th>
+                <th>Used Qty</th>
+                <th>Saved</th>
+            </tr>
+        </thead>
+        <tbody id="recordsTableBody">
+            <!-- First row for input -->
+            <tr>
+                <td><input type="text" id="patientId" placeholder="Enter Patient ID"></td>
+                <td id="lastRequested"></td>
+                <td id="itemName"></td>
+                <td id="subcategory"></td>
+                <td id="demanded"></td>
+                <td id="remaining"></td>
+                <td><input type="number" id="useQuantity" value="1" min="1" onchange="updateRemainingQuantity()"></td>
+                <td><button class="save-btn" onclick="saveData()">Saved</button></td>
+             </tr>
+             <!-- Usage Button (linked to Usage.html) -->
+             <a href="incharge.html"><button class="usage-btn">Home</button></a>
+
+        </tbody>
+    </table>
+
+    <script>
+        let selectedData = JSON.parse(localStorage.getItem('selectedUsage'));
+
+        document.addEventListener("DOMContentLoaded", function () {
+            if (selectedData) {
+                document.getElementById("itemName").innerText = selectedData.name;
+                document.getElementById("subcategory").innerText = selectedData.subcategory;
+                document.getElementById("demanded").innerText = selectedData.demanded;
+                document.getElementById("remaining").innerText = selectedData.remaining;
+                document.getElementById("lastRequested").innerText = selectedData.last_requested;
+            }
+        });
+
+        function updateRemainingQuantity() {
+            let useQuantity = parseInt(document.getElementById("useQuantity").value);
+            if (useQuantity <= selectedData.remaining) {
+                document.getElementById("remaining").innerText = selectedData.remaining - useQuantity;
+            } else {
+                alert("Not enough stock available!");
+                document.getElementById("useQuantity").value = 1;
+                document.getElementById("remaining").innerText = selectedData.remaining;
+            }
+        }
+
+        function saveData() {
+            let patientId = document.getElementById("patientId").value;
+            let useQuantity = parseInt(document.getElementById("useQuantity").value);
+            let records = JSON.parse(localStorage.getItem('usageRecords')) || [];
+
+            if (!patientId) {
+                alert("Please enter Patient ID.");
+                return;
+            }
+
+            if (useQuantity <= 0 || isNaN(useQuantity)) {
+                alert("Please enter a valid quantity to use.");
+                return;
+            }
+
+            if (useQuantity > selectedData.remaining) {
+                alert("Not enough stock available!");
+                return;
+            }
+
+            // Reduce the remaining quantity
+            selectedData.remaining -= useQuantity;
+
+            // Save updated remaining quantity
+            localStorage.setItem('selectedUsage', JSON.stringify(selectedData));
+
+            // Create a new record
+            let newRecord = {
+                patientId: patientId,
+                itemName: selectedData.name,
+                subcategory: selectedData.subcategory,
+                demandedQuantity: selectedData.demanded,
+                remainingQuantity: selectedData.remaining,
+                lastRequested: selectedData.last_requested,
+                usedQuantity: useQuantity,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Add to records array
+            records.push(newRecord);
+            localStorage.setItem('usageRecords', JSON.stringify(records));
+
+            // Create a new row in the table for the saved record
+            let newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${patientId}</td>
+                <td>${selectedData.last_requested}</td>
+                <td>${selectedData.name}</td>
+                <td>${selectedData.subcategory}</td>
+                <td>${selectedData.demanded}</td>
+                <td>${selectedData.remaining}</td>
+                <td>${useQuantity}</td>
+                <td>Saved</td>
+            `;
+
+            // Append the new row to the table
+            document.getElementById("recordsTableBody").appendChild(newRow);
+
+            // Reset the input fields
+            document.getElementById("patientId").value = '';
+            document.getElementById("useQuantity").value = 1;
+            document.getElementById("remaining").innerText = selectedData.remaining;
+
+            // Inform the user that the data has been saved
+            alert("Data saved successfully!");
+        }
+    </script>
+</body>
+</html>

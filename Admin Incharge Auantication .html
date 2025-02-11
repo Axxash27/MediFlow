@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In Page</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: white; }
+        
+        .container { 
+            position: relative; 
+            width: 60vw; 
+            aspect-ratio: 16/9; 
+            display: flex; 
+            border-radius: 24px; 
+            overflow: hidden; 
+        }
+
+        .form-section, .green-section { 
+            position: absolute; 
+            width: 50%; 
+            height: 100%; 
+            transition: transform 0.5s ease-in-out, border-radius 0.5s ease-in-out; 
+            display: flex;
+            flex-direction: column;
+            padding: 48px;
+            justify-content: center;
+            z-index: 2; /* Ensures form is always on top */
+        }
+
+        .form-section { 
+            background: white; 
+            transform: translateX(0); 
+        }
+
+        .green-section { 
+            background: #4CAF50; 
+            align-items: center; 
+            right: 0; 
+            transform: translateX(0); 
+            border-top-left-radius: 50% 100%;
+            border-bottom-left-radius: 50% 100%;
+            z-index: 1; /* Behind the form */
+        }
+
+        .green-section.left-side { 
+            left: 0; 
+            right: auto; 
+            transform: translateX(0); 
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 50% 100%;
+            border-bottom-right-radius: 50% 100%;
+        }
+
+        .hidden-form { transform: translateX(100%); }
+        .hidden-green { transform: translateX(-100%); }
+
+        /* Logo Styling */
+        .logo {
+            width: 100%;
+            height: 200px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: none;
+            margin-bottom: auto;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .switch-btn { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: white; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+        }
+
+        .switch-btn:hover { gap: 16px; }
+        .switch-btn svg { transition: transform 0.3s; }
+
+        /* Fixed Input Field */
+        .input { 
+            width: 100%; 
+            padding: 12px; 
+            background: #f3f3f3; 
+            border-radius: 8px; 
+            border: 1px solid #ccc; 
+            margin-bottom: 16px;
+            cursor: text;
+            transition: all 0.3s ease-in-out;
+            z-index: 3; /* Makes input fields always clickable */
+            position: relative; /* Ensures it's above other elements */
+        }
+
+        .input:hover, .input:focus {
+            background: #e8e8e8; /* Slightly darker background on hover */
+            border: 2px solid #4CAF50; /* Highlighted border */
+            outline: none;
+            box-shadow: 0px 0px 5px rgba(76, 175, 80, 0.5);
+        }
+
+        .submit-btn { 
+            width: 100%; 
+            background: #4CAF50; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            transition: background 0.3s; 
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('2 incharge.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            text-align: center;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .submit-btn:hover { background: #388E3C; }
+    </style>
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+    <div class="container">
+        <div class="form-section" id="formSection">
+            <h1 class="title" id="title">Sign In for Incharge</h1>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" class="input" required>
+                <input type="password" id="password" placeholder="Password" class="input" required>
+                <button type="submit" class="submit-btn">LOGIN</button>
+            </form>
+        </div>
+        <div class="green-section" id="greenSection">
+            <div class="logo">
+                <img src="logo.png" alt="Logo" class="logo-img">
+            </div>
+            <div class="switch-btn" onclick="toggleForm()">
+                <span id="switchText">Switch To Admin</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right">
+                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAdmin = false;
+
+        function toggleForm() {
+            document.getElementById('formSection').classList.toggle('hidden-form');
+            document.getElementById('greenSection').classList.toggle('hidden-green');
+            document.getElementById('greenSection').classList.toggle('left-side');
+
+            isAdmin = !isAdmin;
+
+            // Update title and button text
+            document.getElementById('title').textContent = isAdmin ? "Login for Admin" : "Sign In for Incharge";
+            document.getElementById('switchText').textContent = isAdmin ? "Switch To Incharge" : "Switch To Admin";
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from reloading page
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            if (email === "akashchudasama@gmail.com" && password === "0") {
+                window.location.href = isAdmin ? "admin.html" : "incharge.html";
+            } else {
+                alert("Invalid credentials. Try again.");
+            }
+        });
+    </script>
+</body>
+</html>

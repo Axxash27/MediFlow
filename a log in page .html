@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin/Incharge Selection</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"> <!-- Link to Font Awesome -->
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+      background-image: url('1 Baground image.jpg'); /* background image */
+      background-size: cover;
+    }
+
+    /* Container Styling */
+    .container {
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+      padding: 50px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 1s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Heading Styling */
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    /* Paragraph Styling */
+    p {
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    /* Button Styling */
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      margin: 10px;
+      width: 80%;
+      max-width: 200px;
+      display: flex;
+      align-items: center; /* Align text and icon */
+      justify-content: center;
+    }
+
+    button i {
+      margin-right: 10px; /* Space between icon and text */
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Animation for Container */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Welcome</h1>
+    <p>Please select your role:</p>
+    <button onclick="window.location.href='Admin.html'"><i class="fas fa-user-shield"></i>Admin</button>
+    <button onclick="window.location.href='incharge.html'"><i class="fas fa-cogs"></i>Incharge</button>
+  </div>
+
+</body>
+</html>

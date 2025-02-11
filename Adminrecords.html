@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Records</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 20px;
+            background-image: url('2 Incharge.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 95vh;
+        }
+        h2 {
+            color: #333;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        input {
+            width: 90%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .clear-all-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f44336; /* Red color */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.clear-all-btn:hover {
+    background-color: #d32f2f;
+}
+
+
+    </style>
+</head>
+<body>
+    <h2>Saved Usage Records</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient ID</th>
+                <th>Last Requested</th>
+                <th>Item Name</th>
+                <th>Subcategory</th>
+                <th>Demanded Qty</th>
+                <th>Remaining Qty</th>
+                <th>Used Qty</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="recordsTableBody">
+            <!-- The saved records will be inserted here -->
+        </tbody>
+    </table>
+
+    <button class="clear-all-btn" onclick="clearAllData()">Clear All</button>
+
+    <!-- Button to open the modal -->
+    <button class="save-btn" onclick="openModal()">Download Data</button>
+
+    <!-- The Modal -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Select Date Range</h3>
+            <label for="startDate">Start Date (DD-MM-YYYY):</label>
+            <input type="text" id="startDate" placeholder="DD-MM-YYYY">
+            <label for="endDate">End Date (DD-MM-YYYY):</label>
+            <input type="text" id="endDate" placeholder="DD-MM-YYYY">
+            <br><br>
+            <button class="save-btn" onclick="downloadData()">Download</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let records = JSON.parse(localStorage.getItem('usageRecords')) || [];
+
+            if (records.length === 0) {
+                alert("No saved records found.");
+                return;
+            }
+
+            let recordsTableBody = document.getElementById("recordsTableBody");
+
+            records.forEach(record => {
+                // Format the timestamp as DD-MM-YYYY
+                let formattedDate = new Date(record.timestamp);
+                let day = String(formattedDate.getDate()).padStart(2, '0');
+                let month = String(formattedDate.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                let year = formattedDate.getFullYear();
+                let formattedTimestamp = `${day}-${month}-${year}`;
+
+                let newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td>${record.patientId}</td>
+                    <td>${record.lastRequested}</td>
+                    <td>${record.itemName}</td>
+                    <td>${record.subcategory}</td>
+                    <td>${record.demandedQuantity}</td>
+                    <td>${record.remainingQuantity}</td>
+                    <td>${record.usedQuantity}</td>
+                    <td>${formattedTimestamp}</td>
+                `;
+                recordsTableBody.appendChild(newRow);
+            });
+        });
+
+        function openModal() {
+            document.getElementById("downloadModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("downloadModal").style.display = "none";
+        }
+
+        function downloadData() {
+            let startDate = document.getElementById('startDate').value;
+            let endDate = document.getElementById('endDate').value;
+            let records = JSON.parse(localStorage.getItem('usageRecords')) || [];
+
+            // Convert date strings to Date objects for comparison
+            let start = new Date(startDate.split("-").reverse().join("-"));
+            let end = new Date(endDate.split("-").reverse().join("-"));
+
+            let filteredRecords = records.filter(record => {
+                let recordDate = new Date(record.timestamp);
+                return recordDate >= start && recordDate <= end;
+            });
+
+            if (filteredRecords.length === 0) {
+                alert("No records found in the selected date range.");
+                return;
+            }
+
+            // Convert filtered data to CSV format
+            let csv = "Patient ID,Last Requested,Item Name,Subcategory,Demanded Qty,Remaining Qty,Used Qty,Timestamp\n";
+            filteredRecords.forEach(record => {
+                let formattedDate = new Date(record.timestamp);
+                let day = String(formattedDate.getDate()).padStart(2, '0');
+                let month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+                let year = formattedDate.getFullYear();
+                let formattedTimestamp = `${day}-${month}-${year}`;
+
+                csv += `${record.patientId},${record.lastRequested},${record.itemName},${record.subcategory},${record.demandedQuantity},${record.remainingQuantity},${record.usedQuantity},${formattedTimestamp}\n`;
+            });
+
+            // Create a download link for the CSV
+            let blob = new Blob([csv], { type: 'text/csv' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'usage_records.csv';
+            link.click();
+            closeModal();  // Close the modal after download
+        }
+
+        function clearAllData() {
+    let confirmation = confirm("Please ensure that you have downloaded the data. Click OK to proceed with clearing all records.");
+    
+    if (confirmation) {
+        localStorage.clear();  // Clears all local storage data
+        alert("All records have been cleared.");
+        location.reload();  // Reloads the page to reflect changes
+    }
+}
+
+    </script>
+</body>
+</html>

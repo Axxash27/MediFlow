@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Approve list</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('2 Incharge.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .home-btn, .view-records-btn {
+      position: absolute;
+      top: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      width: 150px;
+      text-align: center;
+    }
+
+    .home-btn:hover, .view-records-btn:hover {
+      background-color: #3e8e41;
+    }
+
+    .view-records-btn {
+      right: 20px;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    table th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .fulfill-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .fulfill-btn:hover {
+      background-color: #3e8e41;
+    }
+
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      z-index: 1000;
+    }
+
+    .popup button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .popup button:hover {
+      background-color: #3e8e41;
+    }
+
+
+    .Log-Out-btn {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    background-color: #dc3545; /* Red color for logout */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.Log-Out-btn:hover {
+    background-color: #c82333;
+}
+
+
+  </style>
+</head>
+<body>
+
+  <a href="Admin Incharge Auantication .html"><button class="home-btn">Home</button></a>
+  <button class="view-records-btn" onclick="window.location.href='Adminrecords.html'">View Records</button>
+
+<!-- Log out Button -->
+<a href="Admin Incharge Auantication .html"><button class="Log-Out-btn">Log Out</button></a>
+
+  <div class="container" id="demand-container">
+    <h1>Demand List</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th>Item</th>
+          <th>Subcategory</th>
+          <th>Quantity</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="demand-list"></tbody>
+    </table>
+  </div>
+
+  <div id="popup" class="popup">
+    <p id="popup-message"></p>
+    <button onclick="closePopup()">OK</button>
+  </div>
+
+  <script>
+    function formatDate(inputDate) {
+      let date = new Date(inputDate);
+      let day = date.getDate().toString().padStart(2, '0');
+      let month = (date.getMonth() + 1).toString().padStart(2, '0');
+      let year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+
+    let demandData = JSON.parse(localStorage.getItem('demands')) || [];
+    function renderDemandList() {
+      const demandList = document.getElementById('demand-list');
+      demandList.innerHTML = '';
+      demandData.forEach((demand, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${demand.department}</td>
+          <td>${demand.item}</td>
+          <td>${demand.subcategory || 'N/A'}</td>
+          <td>${demand.quantity}</td>
+          <td>${formatDate(demand.date)}</td>
+          <td>
+            <button class="fulfill-btn" onclick="fulfillDemand(${index})">Fulfill</button>
+          </td>
+        `;
+        demandList.appendChild(row);
+      });
+    }
+
+    function fulfillDemand(index) {
+      let fulfilledDemand = demandData[index];
+      let usageData = JSON.parse(localStorage.getItem('usage')) || [];
+      usageData.push({
+        department: fulfilledDemand.department,
+        name: fulfilledDemand.item,
+        subcategory: fulfilledDemand.subcategory || 'N/A',
+        demanded: fulfilledDemand.quantity,
+        remaining: fulfilledDemand.quantity,
+        last_requested: formatDate(fulfilledDemand.date)
+      });
+      localStorage.setItem('usage', JSON.stringify(usageData));
+      demandData.splice(index, 1);
+      localStorage.setItem('demands', JSON.stringify(demandData));
+      showPopup(`Confirmed! Fulfilled item: ${fulfilledDemand.item}, Quantity: ${fulfilledDemand.quantity}`);
+      renderDemandList();
+    }
+
+    function showPopup(message) {
+      document.getElementById('popup-message').innerText = message;
+      document.getElementById('popup').style.display = 'block';
+    }
+
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+
+    renderDemandList();
+  </script>
+  
+</body>
+</html>

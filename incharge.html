@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Incharge Demand Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-image: url('2 Incharge.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+      .usage-btn {
+      position: absolute;
+      right: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .usage-btn:hover {
+      background-color: #3e8e41;
+    }
+
+    .Log-Out-btn {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    background-color: #dc3545; /* Red color for logout */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+ }
+
+.Log-Out-btn:hover {
+    background-color: #c82333;
+ }
+
+    
+    .usage-btn {
+      top: 20px; /* Position */
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    form {
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    select, input[type="number"], input[type="date"], input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3e8e41;
+    }
+
+    .summary {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .summary h2 {
+      margin-bottom: 15px;
+    }
+
+    .summary p {
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+
+    .summary button {
+      margin-top: 20px;
+      background-color: #4CAF50;
+    }
+
+    .date-buttons {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .date-buttons button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .date-buttons button:hover {
+      background-color: #3e8e41;
+    }
+    .emergency-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.emergency-btn:hover {
+    background-color: darkred;
+}
+
+  </style>
+</head>
+<body>
+
+ 
+<!-- Log out Button -->
+<a href="Admin Incharge Auantication .html"><button class="Log-Out-btn">Log Out</button></a>
+
+
+  <!-- Usage Button (linked to Usage.html) -->
+  <a href="inchargeusage.html"><button class="usage-btn">Usage</button></a>
+
+  <!-- Demand Form -->
+  <div class="container" id="demand-container">
+    <h1><i class="fa-solid fa-clipboard-list"></i> Place Demand</h1>
+    <form id="demand-form">
+      <label for="department">Department:</label>
+      <select id="department" name="department" required>
+        <option value="">Select Department</option>
+        <option value="cardiology">Cardiology</option>
+        <option value="neurology">Neurology</option>
+        <option value="oncology">Oncology</option>
+        <option value="pediatrics">Pediatrics</option>
+        <option value="emergency">Emergency</option>
+      </select>
+
+      <label for="item">Item:</label>
+      <select id="item" name="item" onchange="showSubcategory()" required>
+        <option value="">Select Item</option>
+        <option value="cotton_balls">Cotton Balls</option>
+        <option value="tubes">Tubes</option>
+        <option value="gloves">Gloves</option>
+        <option value="medicines">Medicines</option>
+        <option value="other">Other</option>
+      </select>
+
+      <div id="subcategoryContainer">
+        <label for="subcategory">Subcategory:</label>
+        <select id="subcategory" name="subcategory" disabled>
+          <option value="">Select Subcategory</option>
+        </select>
+      </div>
+
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" min="1" required>
+
+      <!-- Date Buttons for Today and Tomorrow -->
+      <div class="date-buttons">
+        <button type="button" onclick="setDate('today')">Today</button>
+        <button type="button" onclick="setDate('tomorrow')">Tomorrow</button>
+      </div>
+
+      <label for="date">Required Date:</label>
+      <input type="date" id="date" name="date" required>
+
+      <button type="button" onclick="showSummary()">Show Summary</button>
+    </form>
+    
+    <div class="summary" id="summary">
+      <h2>Demand Summary</h2>
+      <p><strong>Department:</strong> <span id="summary-department"></span></p>
+      <p><strong>Item:</strong> <span id="summary-item"></span></p>
+      <p><strong>Subcategory:</strong> <span id="summary-subcategory"></span></p>
+      <p><strong>Quantity:</strong> <span id="summary-quantity"></span></p>
+      <p><strong>Required Date:</strong> <span id="summary-date"></span></p>
+      <button onclick="storeDemand()">Place Demand</button>
+      <button onclick="cancelDemand()">Cancel</button>
+    </div>
+  </div>
+  <div>
+    <button onclick="window.location.href='InchargeEmergencyDemand.html';" class="emergency-btn">Emergency</button>
+  </div>
+
+  <script>
+    // Set date to today or tomorrow when button is clicked
+    function setDate(day) {
+      const dateInput = document.getElementById("date");
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      if (day === 'today') {
+        dateInput.value = today.toISOString().split('T')[0];
+      } else if (day === 'tomorrow') {
+        dateInput.value = tomorrow.toISOString().split('T')[0];
+      }
+    }
+
+    // Show subcategory options based on selected item
+    function showSubcategory() {
+      const item = document.getElementById("item").value;
+      const subcategorySelect = document.getElementById("subcategory");
+      subcategorySelect.disabled = false;
+
+      if (item === "cotton_balls") {
+        subcategorySelect.innerHTML = ` 
+          <option value="">Select Subcategory</option>
+          <option value="surgical_cotton">Surgical Cotton</option>
+          <option value="absorbent_cotton">Absorbent Cotton</option>
+          <option value="cotton_gauze">Cotton Gauze</option>
+        `;
+      } else if (item === "tubes") {
+        subcategorySelect.innerHTML = ` 
+          <option value="">Select Subcategory</option>
+          <option value="endotracheal_tubes">Endotracheal Tubes</option>
+          <option value="nasogastric_tubes">Nasogastric Tubes</option>
+          <option value="tracheostomy_tubes">Tracheostomy Tubes</option>
+        `;
+      } else if (item === "gloves") {
+        subcategorySelect.innerHTML = `
+          <option value="">Select Subcategory</option>
+          <option value="surgical_gloves">Surgical Gloves</option>
+          <option value="examination_gloves">Examination Gloves</option>
+        `;
+      } else if (item === "medicines") {
+        subcategorySelect.innerHTML = `
+          <option value="">Select Subcategory</option>
+          <option value="pain_relievers">Pain Relievers</option>
+          <option value="antibiotics">Antibiotics</option>
+          <option value="antiseptics">Antiseptics</option>
+        `;
+      } else {
+        subcategorySelect.innerHTML = `<option value="">Select Subcategory</option>`;
+      }
+    }
+
+    // Show demand summary
+    function showSummary() {
+      const department = document.getElementById("department").value;
+      const item = document.getElementById("item").value;
+      const subcategory = document.getElementById("subcategory").value || "N/A";
+      const quantity = document.getElementById("quantity").value;
+      const date = document.getElementById("date").value;
+
+      if (!department || !item || !quantity || !date) {
+        alert("Please fill in all fields before viewing the summary.");
+        return;
+      }
+
+      document.getElementById("summary-department").innerText = department;
+      document.getElementById("summary-item").innerText = item;
+      document.getElementById("summary-subcategory").innerText = subcategory;
+      document.getElementById("summary-quantity").innerText = quantity;
+      document.getElementById("summary-date").innerText = date;
+
+      document.getElementById("summary").style.display = "block";
+    }
+
+    function storeDemand() {
+      const department = document.getElementById("department").value;
+      const item = document.getElementById("item").value;
+      const subcategory = document.getElementById("subcategory").value;
+      const quantity = document.getElementById("quantity").value;
+      const date = document.getElementById("date").value;
+
+      const newDemand = { department, item, subcategory, quantity, date };
+
+      const demands = JSON.parse(localStorage.getItem("demands")) || [];
+      demands.push(newDemand);
+      localStorage.setItem("demands", JSON.stringify(demands));
+
+      alert("Your demand has been stored successfully!");
+
+      // Reset form fields to default values
+      document.getElementById("demand-form").reset();
+
+      // Optionally, reset subcategory dropdown if needed
+      document.getElementById("subcategory").disabled = true;
+      document.getElementById("summary").style.display = "none";  // Hide summary after placing demand
+    }
+
+    function cancelDemand() {
+      document.getElementById("summary").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
